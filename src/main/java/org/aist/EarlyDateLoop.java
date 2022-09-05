@@ -60,9 +60,9 @@ public final class EarlyDateLoop {
             if (iterations == EarlyDateLoop.GET_APPOINTMENTS_RESET_CNT) {
                 iterations = 0;
                 if (this.lastDate == null) {
-                    this.commands.publishNoAppointments(Duration.of(5L/*10 iterations * 30 seconds sleep*/, ChronoUnit.MINUTES));
+                    this.commands.publishNoAppointments(Duration.of(10L/*20 iterations * 30 seconds sleep*/, ChronoUnit.MINUTES));
                 } else {
-                    this.commands.publishCurrentDate(this.lastDate, Duration.of(5L, ChronoUnit.MINUTES));
+                    this.commands.publishCurrentDate(this.lastDate, Duration.of(10L, ChronoUnit.MINUTES));
                 }
                 sessionToken = this.getSessionToken(args);
                 System.out.println("update session token");
