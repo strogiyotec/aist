@@ -1,14 +1,14 @@
 package org.aist.telegram;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import lombok.AllArgsConstructor;
 import org.aist.http.Preconditions;
 
@@ -63,7 +63,7 @@ public final class TelegramBotCommandsImpl implements TelegramBotCommands {
             "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s",
             this.botApiKey,
             this.chatId,
-            message
+            URLEncoder.encode(message, StandardCharsets.UTF_8)
         );
     }
 }
