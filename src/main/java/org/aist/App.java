@@ -22,26 +22,9 @@ public class App {
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         final CliArgs cliArgs = new CliArgs();
-        final HttpClient client = HttpClient.newBuilder().build();
-        final LoginPage.ResponsePayload loginPagePayload = new LoginPageImpl(client).get(Headers.loginPageHeaders());
-        final String sessionToken = new LoginRequestImpl(client).send(
-            new LoginRequest.Payload(
-                cliArgs.getEmail(),
-                cliArgs.getPassword(),
-                Headers.loginRequestHeaders(
-                    loginPagePayload.getYatriSession()
-                ),
-                loginPagePayload.getCsrfToken()
-            )
-        );
-        final EarlyDateLoop loop = new EarlyDateLoop(
-            new TelegramBotCommandsImpl(
-                client,
-                cliArgs.getBotToken(),
-                cliArgs.getChatId()
-            )
-        );
-        loop.run(sessionToken, new AppointmentsRequestImpl(client, objectMapper));
+        final HttpClient httpClient = HttpClient.newBuilder().build();
+        final EarlyDateLoop loop = new EarlyDateLoop(new TelegramBotCommandsImpl(httpClient, cliArgs.getBotToken(), cliArgs.getChatId()), httpClient, objectMapper);
+        loop.run(cliArgs);
     }
 
     @Data
