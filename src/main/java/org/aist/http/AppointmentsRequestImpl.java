@@ -23,7 +23,6 @@ public final class AppointmentsRequestImpl implements AppointmentsRequest {
             .headers(requestPayload.getHeaders())
             .build();
         final HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        Preconditions.checkStatusCode(response.statusCode(), 200);
         final String body = response.body();
         return this.objectMapper.readValue(
             body,

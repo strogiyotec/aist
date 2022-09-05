@@ -21,7 +21,7 @@ public final class EarlyDateLoop {
     /**
      * Try getting appointments this amount of times with same token then use new token.
      */
-    private static final int GET_APPOINTMENTS_RESET_CNT = 120;
+    private static final int GET_APPOINTMENTS_RESET_CNT = 40;
 
     private final TelegramBotCommands commands;
 
