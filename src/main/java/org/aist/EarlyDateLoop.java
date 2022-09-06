@@ -76,9 +76,12 @@ public final class EarlyDateLoop {
             this.lastDate = null;
         } else {
             System.out.println("Response is: " + latestAppointments);
-            this.lastDate = latestAppointments.get(0).getDate();
-            this.commands.publishEarliestDate(latestAppointments.get(0).getDate());
-            System.out.println("earliest appointment is " + this.lastDate);
+            final LocalDate apiDate = latestAppointments.get(0).getDate();
+            if(apiDate.isBefore(this.lastDate)){
+                this.lastDate = apiDate;
+                System.out.println("earliest appointment is " + this.lastDate);
+                this.commands.publishEarliestDate(latestAppointments.get(0).getDate());
+            }
         }
     }
 
