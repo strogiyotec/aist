@@ -73,15 +73,12 @@ public final class EarlyDateLoop {
     private void updateEarliestAppointment(final List<AppointmentsRequest.ResponsePayload> latestAppointments) throws Exception {
         if (latestAppointments.isEmpty()) {
             System.out.println("No appointments for next 90 days");
+            this.lastDate = null;
         } else {
             System.out.println("Response is: " + latestAppointments);
-            if (this.lastDate == null || this.lastDate.isAfter(latestAppointments.get(0).getDate())) {
-                this.lastDate = latestAppointments.get(0).getDate();
-                this.commands.publishEarliestDate(this.lastDate);
-                System.out.println("New earliest appointment is " + this.lastDate);
-            } else {
-                System.out.println("None of them is earlier than current one");
-            }
+            this.lastDate = latestAppointments.get(0).getDate();
+            this.commands.publishEarliestDate(latestAppointments.get(0).getDate());
+            System.out.println("earliest appointment is " + this.lastDate);
         }
     }
 
