@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,8 +26,6 @@ public final class EarlyDateLoop {
 
     private final TelegramBotCommands commands;
 
-    private final HttpClient httpClient;
-
     private final AppointmentsRequest appointmentsRequest;
 
     private final LoginPage loginPage;
@@ -37,7 +36,6 @@ public final class EarlyDateLoop {
 
     public EarlyDateLoop(final TelegramBotCommands commands, final HttpClient httpClient, final ObjectMapper objectMapper) {
         this.commands = commands;
-        this.httpClient = httpClient;
         this.appointmentsRequest = new AppointmentsRequestImpl(httpClient, objectMapper);
         this.loginPage = new LoginPageImpl(httpClient);
         this.loginRequest = new LoginRequestImpl(httpClient);
@@ -72,15 +70,19 @@ public final class EarlyDateLoop {
 
     private void updateEarliestAppointment(final List<AppointmentsRequest.ResponsePayload> latestAppointments) throws Exception {
         if (latestAppointments.isEmpty()) {
-            System.out.println("No appointments for next 90 days");
+            System.out.println("No appointments");
             this.lastDate = null;
         } else {
             System.out.println("Response is: " + latestAppointments);
             final LocalDate apiDate = latestAppointments.get(0).getDate();
-            if(this.lastDate == null || apiDate.isBefore(this.lastDate)){
-                this.lastDate = apiDate;
-                System.out.println("earliest appointment is " + this.lastDate);
-                this.commands.publishEarliestDate(latestAppointments.get(0).getDate());
+            if (this.lastDate == null || apiDate.isBefore(this.lastDate)) {
+                if (apiDate.isAfter(LocalDate.of(2023, Month.JANUARY, 1))) {
+                    System.out.println("The date is only for next year");
+                } else {
+                    this.lastDate = apiDate;
+                    System.out.println("earliest appointment is " + this.lastDate);
+                    this.commands.publishEarliestDate(latestAppointments.get(0).getDate());
+                }
             }
         }
     }

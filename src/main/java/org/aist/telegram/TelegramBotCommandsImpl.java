@@ -20,9 +20,14 @@ public final class TelegramBotCommandsImpl implements TelegramBotCommands {
 
     private final String chatId;
 
+    /**
+     * Label that you can attach to all telegram messages.
+     */
+    private final String label;
+
     @Override
     public void publishEarliestDate(final LocalDate localDate) throws Exception {
-        final String message = String.format("Earliest date is [%s]", localDate.toString());
+        final String message = String.format("[%s] Earliest date is [%s]",this.label, localDate.toString());
         final HttpRequest request = HttpRequest.newBuilder(new URI(this.sendMessageUrl(message)))
             .GET()
             .build();
@@ -33,7 +38,8 @@ public final class TelegramBotCommandsImpl implements TelegramBotCommands {
     @Override
     public void publishCurrentDate(final LocalDate localDate, final Duration duration) throws Exception {
         final String message = String.format(
-            "I tried to get latest appointment slots for %d minutes and it's still the same [%s]",
+            "[%s] I tried to get latest appointment slots for %d minutes and it's still the same [%s]",
+            this.label,
             duration.toMinutes(),
             localDate.toString()
         );
@@ -47,7 +53,8 @@ public final class TelegramBotCommandsImpl implements TelegramBotCommands {
     @Override
     public void publishNoAppointments(final Duration duration) throws Exception {
         final String message = String.format(
-            "I tried to get latest appointments for %d minutes but there are no appointment slots in the next 90 days",
+            "[%s] I tried to get latest appointments for %d minutes but there are no appointment slots ",
+            this.label,
             duration.toMinutes()
         );
         final HttpRequest request = HttpRequest.newBuilder(new URI(this.sendMessageUrl(message)))

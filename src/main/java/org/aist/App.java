@@ -21,9 +21,18 @@ public class App {
     public static void main(String[] args) throws Exception {
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        final CliArgs cliArgs = new CliArgs();
+        final App.CliArgs cliArgs = new App.CliArgs();
         final HttpClient httpClient = HttpClient.newBuilder().build();
-        final EarlyDateLoop loop = new EarlyDateLoop(new TelegramBotCommandsImpl(httpClient, cliArgs.getBotToken(), cliArgs.getChatId()), httpClient, objectMapper);
+        final EarlyDateLoop loop = new EarlyDateLoop(
+            new TelegramBotCommandsImpl(
+                httpClient,
+                cliArgs.getBotToken(),
+                cliArgs.getChatId(),
+                cliArgs.getLabel()
+            ),
+            httpClient,
+            objectMapper
+        );
         loop.run(cliArgs);
     }
 
@@ -37,11 +46,14 @@ public class App {
 
         private final String chatId;
 
+        private final String label;
+
         public CliArgs() {
             this.password = System.getProperty("password");
             this.email = System.getProperty("email");
             this.botToken = System.getProperty("botToken");
             this.chatId = System.getProperty("chatId");
+            this.label = System.getProperty("label");
         }
     }
 }
