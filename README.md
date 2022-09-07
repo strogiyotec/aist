@@ -20,7 +20,7 @@ you a notification if there are any new early dates via telegram channel
        telegram channel public and assign your bot as an administrator of your
        channel )
     4. `-DbotToken` is your telegram bot token(Instruction on how to set
-       up [telegram bot](https://www.google.com/search?q=telegram+bot&sxsrf=ALiCzsb_S7nL7gEec03gcmXLwIK-Chiqsg%3A1662561038849&source=hp&ei=DqsYY6nCMb6H0PEP9pWx6AY&iflsig=AJiK0e8AAAAAYxi5HtLBWzAI1z8m9T_NQbt3VUqRbmkR&oq=telegram+bot&gs_lcp=Cgdnd3Mtd2l6EAMYATIECCMQJzIOCAAQgAQQsQMQgwEQiwMyCAgAEIAEEIsDMggIABCABBCLAzIICAAQgAQQiwMyCAgAEIAEEIsDMggIABCABBCLAzIICAAQgAQQiwMyCAgAEIAEEIsDMggIABCABBCLAzoKCC4QxwEQ0QMQJzoFCAAQkQI6CwgAELEDEIMBEJECOgsIABCABBCxAxCDAToRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOggIABCxAxCDAToQCAAQgAQQhwIQsQMQgwEQFDoICC4QgAQQsQM6CAgAEIAEELEDOgUIABCABDoKCAAQgAQQhwIQFDoICAAQgAQQyQNQAFibD2DmHGgBcAB4AIABeYgB6wmSAQQxMC4zmAEAoAEBuAED&sclient=gws-wiz))
+       up [telegram bot](https://core.telegram.org/bots/api))
 
 ## TODO
 
