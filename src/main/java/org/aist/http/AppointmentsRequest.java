@@ -9,13 +9,25 @@ import lombok.Data;
 
 public interface AppointmentsRequest {
 
-    List<ResponsePayload> getLatestAppointments(RequestPayload requestPayload) throws Exception;
+    List<AppointmentsRequest.ResponsePayload> getLatestAppointments(AppointmentsRequest.RequestPayload requestPayload) throws Exception;
 
     @AllArgsConstructor
     @Data
     class RequestPayload {
 
+        private final String accountId;
+
         private final String[] headers;
+    }
+
+    @Data
+    class Credentials{
+
+        private final String csrf;
+
+        private final String yatri;
+
+        private final String accountNumber;
     }
 
     @Data

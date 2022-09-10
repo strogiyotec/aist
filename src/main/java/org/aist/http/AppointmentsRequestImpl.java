@@ -18,7 +18,7 @@ public final class AppointmentsRequestImpl implements AppointmentsRequest {
 
     @Override
     public List<ResponsePayload> getLatestAppointments(final RequestPayload requestPayload) throws Exception {
-        final HttpRequest request = HttpRequest.newBuilder(new URI("https://ais.usvisa-info.com/en-ca/niv/schedule/43348961/appointment/days/95.json?appointments[expedite]=false"))
+        final HttpRequest request = HttpRequest.newBuilder(new URI(String.format("https://ais.usvisa-info.com/en-ca/niv/schedule/%s/appointment/days/95.json?appointments[expedite]=false",requestPayload.getAccountId())))
             .GET()
             .headers(requestPayload.getHeaders())
             .build();

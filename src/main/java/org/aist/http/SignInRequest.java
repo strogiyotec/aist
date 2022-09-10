@@ -1,20 +1,17 @@
 package org.aist.http;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-public interface LoginRequest {
+public interface SignInRequest {
 
     /**
      * Perform login and return cookies with auth.
      */
-    String send(LoginRequest.Payload payload) throws Exception;
+    SignInRequest.Response send(SignInRequest.Request payload) throws Exception;
 
-    @AllArgsConstructor
     @Data
-    class Payload {
+    class Request {
         private final String username;
 
         private final String password;
@@ -22,5 +19,12 @@ public interface LoginRequest {
         private final String[] headers;
 
         private final String csrfToken;
+    }
+
+    @Data
+    class Response {
+        private final String yatriSession;
+
+        private final String location;
     }
 }

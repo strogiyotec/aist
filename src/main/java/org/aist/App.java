@@ -3,15 +3,7 @@ package org.aist;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.net.http.HttpClient;
-import java.util.List;
 import lombok.Data;
-import org.aist.http.AppointmentsRequest;
-import org.aist.http.AppointmentsRequestImpl;
-import org.aist.http.LoginPage;
-import org.aist.http.LoginPageImpl;
-import org.aist.http.LoginRequest;
-import org.aist.http.LoginRequestImpl;
-import org.aist.http.headers.Headers;
 import org.aist.telegram.TelegramBotCommandsImpl;
 
 /**

@@ -8,12 +8,14 @@ import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.aist.http.AppointmentPage;
+import org.aist.http.AppointmentPageImpl;
 import org.aist.http.AppointmentsRequest;
 import org.aist.http.AppointmentsRequestImpl;
 import org.aist.http.LoginPage;
 import org.aist.http.LoginPageImpl;
-import org.aist.http.LoginRequest;
-import org.aist.http.LoginRequestImpl;
+import org.aist.http.SignInRequest;
+import org.aist.http.SignInRequestImpl;
 import org.aist.http.headers.Headers;
 import org.aist.telegram.TelegramBotCommands;
 
@@ -30,7 +32,9 @@ public final class EarlyDateLoop {
 
     private final LoginPage loginPage;
 
-    private final LoginRequest loginRequest;
+    private final SignInRequest loginRequest;
+
+    private final AppointmentPage appointmentPage;
 
     private LocalDate lastDate;
 
@@ -38,18 +42,20 @@ public final class EarlyDateLoop {
         this.commands = commands;
         this.appointmentsRequest = new AppointmentsRequestImpl(httpClient, objectMapper);
         this.loginPage = new LoginPageImpl(httpClient);
-        this.loginRequest = new LoginRequestImpl(httpClient);
+        this.loginRequest = new SignInRequestImpl(httpClient);
+        this.appointmentPage = new AppointmentPageImpl(httpClient);
     }
 
     public void run(final App.CliArgs args) throws Exception {
-        String sessionToken = this.getSessionToken(args);
-        System.out.println("Got session token");
+        AppointmentsRequest.Credentials credentials = this.getCredentials(args);
+        System.out.println("Got credentials");
         int iterations = 0;
         while (true) {
             System.out.println("Send get appointments request");
             var latestAppointments = this.appointmentsRequest.getLatestAppointments(
                 new AppointmentsRequest.RequestPayload(
-                    Headers.appointmentsHeaders(sessionToken)
+                    credentials.getAccountNumber(),
+                    Headers.appointmentsHeaders(credentials.getYatri(), credentials.getCsrf(), credentials.getAccountNumber())
                 )
             );
             this.updateEarliestAppointment(latestAppointments);
@@ -62,7 +68,7 @@ public final class EarlyDateLoop {
                 } else {
                     this.commands.publishCurrentDate(this.lastDate, Duration.of(60L, ChronoUnit.MINUTES));
                 }
-                sessionToken = this.getSessionToken(args);
+                credentials = this.getCredentials(args);
                 System.out.println("update session token");
             }
         }
@@ -87,10 +93,10 @@ public final class EarlyDateLoop {
         }
     }
 
-    private String getSessionToken(App.CliArgs cliArgs) throws Exception {
+    private AppointmentsRequest.Credentials getCredentials(App.CliArgs cliArgs) throws Exception {
         final LoginPage.ResponsePayload loginPagePayload = this.loginPage.get(Headers.loginPageHeaders());
-        return this.loginRequest.send(
-            new LoginRequest.Payload(
+        final SignInRequest.Response loginPageResponse = this.loginRequest.send(
+            new SignInRequest.Request(
                 cliArgs.getEmail(),
                 cliArgs.getPassword(),
                 Headers.loginRequestHeaders(
@@ -98,6 +104,14 @@ public final class EarlyDateLoop {
                 ),
                 loginPagePayload.getCsrfToken()
             )
+        );
+        final AppointmentPage.Response appointmentPageResponse = this.appointmentPage.get(
+            new AppointmentPage.Request(loginPageResponse.getLocation(), loginPageResponse.getYatriSession())
+        );
+        return new AppointmentsRequest.Credentials(
+            appointmentPageResponse.getCsrf(),
+            loginPageResponse.getYatriSession(),
+            appointmentPageResponse.getAccountNumber()
         );
     }
 }

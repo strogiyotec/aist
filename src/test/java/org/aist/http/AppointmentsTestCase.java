@@ -27,7 +27,8 @@ public final class AppointmentsTestCase {
         //when
         var response = appointmentsRequest.getLatestAppointments(
             new AppointmentsRequest.RequestPayload(
-                Headers.appointmentsHeaders("test")
+                "test",
+                Headers.appointmentsHeaders("test","test","test")
             )
         );
         Assertions.assertFalse(response.isEmpty());
