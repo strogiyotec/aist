@@ -6,7 +6,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import lombok.AllArgsConstructor;
-import org.aist.http.Csrf.Csrf;
+import org.aist.http.csrf.Csrf;
 import org.aist.http.Preconditions;
 import org.aist.http.cookies.Cookies;
 

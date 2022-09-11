@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
-import org.aist.http.Csrf.Csrf;
+import org.aist.http.csrf.Csrf;
 import org.aist.http.Preconditions;
 import org.aist.http.headers.Headers;
 

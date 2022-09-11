@@ -1,4 +1,4 @@
-package org.aist.http.Csrf;
+package org.aist.http.csrf;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
