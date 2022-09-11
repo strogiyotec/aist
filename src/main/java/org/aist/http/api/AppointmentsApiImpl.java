@@ -1,4 +1,4 @@
-package org.aist.http;
+package org.aist.http.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +10,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class AppointmentsRequestImpl implements AppointmentsRequest {
+public final class AppointmentsApiImpl implements AppointmentsApi {
 
     private final HttpClient httpClient;
 

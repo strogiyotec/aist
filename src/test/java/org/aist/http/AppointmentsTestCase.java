@@ -5,12 +5,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
-import java.util.List;
+import org.aist.http.api.AppointmentsApi;
+import org.aist.http.api.AppointmentsApiImpl;
 import org.aist.http.headers.Headers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 public final class AppointmentsTestCase {
@@ -21,12 +21,12 @@ public final class AppointmentsTestCase {
         var objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         var client = AppointmentsTestCase.client();
-        var appointmentsRequest = new AppointmentsRequestImpl(
+        var appointmentsRequest = new AppointmentsApiImpl(
             client, objectMapper
         );
         //when
         var response = appointmentsRequest.getLatestAppointments(
-            new AppointmentsRequest.RequestPayload(
+            new AppointmentsApi.RequestPayload(
                 "test",
                 Headers.appointmentsHeaders("test","test","test")
             )

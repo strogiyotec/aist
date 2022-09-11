@@ -1,14 +1,13 @@
-package org.aist.http;
+package org.aist.http.api;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-public interface SignInRequest {
+public interface SignInApi {
 
     /**
      * Perform login and return cookies with auth.
      */
-    SignInRequest.Response send(SignInRequest.Request payload) throws Exception;
+    SignInApi.Response signIn(SignInApi.Request payload) throws Exception;
 
     @Data
     class Request {

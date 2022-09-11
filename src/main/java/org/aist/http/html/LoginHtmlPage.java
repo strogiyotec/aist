@@ -1,15 +1,15 @@
-package org.aist.http;
+package org.aist.http.html;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-public interface LoginPage {
+public interface LoginHtmlPage {
 
     /**
      * The csrf token from login page.
      * We need it to send an actual sign in request
      */
-    LoginPage.ResponsePayload get(String... headers) throws Exception;
+    LoginHtmlPage.ResponsePayload get(String... headers) throws Exception;
 
     @AllArgsConstructor
     @Data

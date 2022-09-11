@@ -1,10 +1,10 @@
-package org.aist.http;
+package org.aist.http.html;
 
 import lombok.Data;
 
-public interface AppointmentPage {
+public interface AppointmentHtmlPage {
 
-    AppointmentPage.Response get(AppointmentPage.Request request) throws Exception;
+    AppointmentHtmlPage.Response get(AppointmentHtmlPage.Request request) throws Exception;
 
     @Data
     class Response {

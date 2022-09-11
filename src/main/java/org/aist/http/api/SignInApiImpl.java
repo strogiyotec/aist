@@ -1,26 +1,26 @@
-package org.aist.http;
+package org.aist.http.api;
 
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 import lombok.AllArgsConstructor;
+import org.aist.http.Preconditions;
 import org.aist.http.cookies.Cookies;
 import org.aist.http.post.PostData;
 
 @AllArgsConstructor
-public final class SignInRequestImpl implements SignInRequest {
+public final class SignInApiImpl implements SignInApi {
 
     private final HttpClient httpClient;
 
     @Override
-    public SignInRequest.Response send(Request payload) throws Exception {
-        final HttpRequest request = SignInRequestImpl.request(payload);
+    public SignInApi.Response signIn(Request payload) throws Exception {
+        final HttpRequest request = SignInApiImpl.request(payload);
         final HttpResponse<Void> response = this.httpClient.send(request, HttpResponse.BodyHandlers.discarding());
         Preconditions.checkStatusCode(response.statusCode(), 302);
-        return new SignInRequest.Response(
+        return new SignInApi.Response(
             Cookies.fetchYatri(response.headers()),
             response.headers().firstValue("Location").orElseThrow(() -> new IllegalStateException("Sign in response doesn't have redirect page"))
         );
@@ -31,7 +31,7 @@ public final class SignInRequestImpl implements SignInRequest {
             .headers(payload.getHeaders())
             .POST(HttpRequest.BodyPublishers.ofString(
                 PostData.ofMap(
-                    SignInRequestImpl.formData(payload)
+                    SignInApiImpl.formData(payload)
                 )
             ))
             .build();

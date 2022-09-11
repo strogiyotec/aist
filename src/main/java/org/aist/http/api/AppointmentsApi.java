@@ -1,4 +1,4 @@
-package org.aist.http;
+package org.aist.http.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -7,9 +7,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-public interface AppointmentsRequest {
+public interface AppointmentsApi {
 
-    List<AppointmentsRequest.ResponsePayload> getLatestAppointments(AppointmentsRequest.RequestPayload requestPayload) throws Exception;
+    List<AppointmentsApi.ResponsePayload> getLatestAppointments(AppointmentsApi.RequestPayload requestPayload) throws Exception;
 
     @AllArgsConstructor
     @Data

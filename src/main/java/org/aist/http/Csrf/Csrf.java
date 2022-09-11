@@ -2,7 +2,6 @@ package org.aist.http.Csrf;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.aist.http.LoginPageImpl;
 
 public final class Csrf {
 

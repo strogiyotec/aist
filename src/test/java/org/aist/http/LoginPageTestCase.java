@@ -2,6 +2,7 @@ package org.aist.http;
 
 import java.net.http.HttpClient;
 import org.aist.http.headers.Headers;
+import org.aist.http.html.LoginHtmlPageImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,7 @@ public final class LoginPageTestCase {
     @Test
     void testCsrfToken() throws Exception {
         //given
-        var loginPage = new LoginPageImpl(HttpClient.newBuilder().build());
+        var loginPage = new LoginHtmlPageImpl(HttpClient.newBuilder().build());
         //when
         var payload = loginPage.get(Headers.loginPageHeaders());
         //then

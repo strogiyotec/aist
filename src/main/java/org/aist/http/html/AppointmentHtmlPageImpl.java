@@ -1,4 +1,4 @@
-package org.aist.http;
+package org.aist.http.html;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,23 +12,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import org.aist.http.Csrf.Csrf;
+import org.aist.http.Preconditions;
 import org.aist.http.headers.Headers;
 
 @AllArgsConstructor
-public final class AppointmentPageImpl implements AppointmentPage {
+public final class AppointmentHtmlPageImpl implements AppointmentHtmlPage {
 
     private static final Pattern APPOINTMENT_NUMBER_PTRN = Pattern.compile("en-ca/niv/schedule/([0-9]+).*");
 
     private final HttpClient httpClient;
 
     @Override
-    public AppointmentPage.Response get(final AppointmentPage.Request request) throws Exception {
+    public AppointmentHtmlPage.Response get(final AppointmentHtmlPage.Request request) throws Exception {
         //first we get group page from account page
         final HttpRequest groupRequest = this.groupPageRequest(request);
         final Map.Entry<String, HttpRequest> appointmentPageRequest = this.appointmentPage(request, groupRequest);
         final HttpResponse<String> response = this.httpClient.send(appointmentPageRequest.getValue(), HttpResponse.BodyHandlers.ofString());
         Preconditions.checkStatusCode(response.statusCode(), 200);
-        return new AppointmentPage.Response(appointmentPageRequest.getKey(), Csrf.fetchToken(response.body()));
+        return new AppointmentHtmlPage.Response(appointmentPageRequest.getKey(), Csrf.fetchToken(response.body()));
     }
 
     /**
@@ -37,7 +38,7 @@ public final class AppointmentPageImpl implements AppointmentPage {
     private Map.Entry<String, HttpRequest> appointmentPage(final Request request, final HttpRequest groupRequest) throws Exception {
         final HttpResponse<String> groupResponse = this.httpClient.send(groupRequest, HttpResponse.BodyHandlers.ofString());
         Preconditions.checkStatusCode(groupResponse.statusCode(), 200);
-        final String appointmentNumber = AppointmentPageImpl.appointmentNumber(groupResponse.body());
+        final String appointmentNumber = AppointmentHtmlPageImpl.appointmentNumber(groupResponse.body());
         final String referer = String.format("https://ais.usvisa-info.com/en-ca/niv/schedule/%s/continue_actions", appointmentNumber);
         final String url = String.format("https://ais.usvisa-info.com/en-ca/niv/schedule/%s/appointment", appointmentNumber);
         return new AbstractMap.SimpleEntry<>(
@@ -50,7 +51,7 @@ public final class AppointmentPageImpl implements AppointmentPage {
     }
 
     private HttpRequest groupPageRequest(final Request request) throws URISyntaxException, IOException, InterruptedException {
-        final HttpRequest accountPageReq = AppointmentPageImpl.accountPageRequest(request);
+        final HttpRequest accountPageReq = AppointmentHtmlPageImpl.accountPageRequest(request);
         final HttpResponse<Void> response = this.httpClient.send(accountPageReq, HttpResponse.BodyHandlers.discarding());
         Preconditions.checkStatusCode(response.statusCode(), 302);
         final String location = response.headers().firstValue("Location").orElseThrow(() -> new IllegalStateException("Account page does not redirect to group"));
@@ -60,7 +61,7 @@ public final class AppointmentPageImpl implements AppointmentPage {
             .build();
     }
 
-    private static HttpRequest accountPageRequest(final AppointmentPage.Request request) throws URISyntaxException {
+    private static HttpRequest accountPageRequest(final AppointmentHtmlPage.Request request) throws URISyntaxException {
         return HttpRequest.newBuilder(new URI(request.getUrl()))
             .GET()
             .headers(Headers.headersWithCookieAndReferer(request.getYatri(), "https://ais.usvisa-info.com/en-ca/niv/users/sign_in"))
@@ -68,7 +69,7 @@ public final class AppointmentPageImpl implements AppointmentPage {
     }
 
     private static String appointmentNumber(final String html) {
-        final Matcher matcher = AppointmentPageImpl.APPOINTMENT_NUMBER_PTRN.matcher(html);
+        final Matcher matcher = AppointmentHtmlPageImpl.APPOINTMENT_NUMBER_PTRN.matcher(html);
         if (matcher.find()) {
             return matcher.group(1);
         } else {

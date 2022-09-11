@@ -8,14 +8,14 @@ import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.aist.http.AppointmentPage;
-import org.aist.http.AppointmentPageImpl;
-import org.aist.http.AppointmentsRequest;
-import org.aist.http.AppointmentsRequestImpl;
-import org.aist.http.LoginPage;
-import org.aist.http.LoginPageImpl;
-import org.aist.http.SignInRequest;
-import org.aist.http.SignInRequestImpl;
+import org.aist.http.html.AppointmentHtmlPage;
+import org.aist.http.html.AppointmentHtmlPageImpl;
+import org.aist.http.api.AppointmentsApi;
+import org.aist.http.api.AppointmentsApiImpl;
+import org.aist.http.html.LoginHtmlPage;
+import org.aist.http.html.LoginHtmlPageImpl;
+import org.aist.http.api.SignInApi;
+import org.aist.http.api.SignInApiImpl;
 import org.aist.http.headers.Headers;
 import org.aist.telegram.TelegramBotCommands;
 
@@ -28,32 +28,32 @@ public final class EarlyDateLoop {
 
     private final TelegramBotCommands commands;
 
-    private final AppointmentsRequest appointmentsRequest;
+    private final AppointmentsApi appointmentsRequest;
 
-    private final LoginPage loginPage;
+    private final LoginHtmlPage loginPage;
 
-    private final SignInRequest loginRequest;
+    private final SignInApi loginRequest;
 
-    private final AppointmentPage appointmentPage;
+    private final AppointmentHtmlPage appointmentPage;
 
     private LocalDate lastDate;
 
     public EarlyDateLoop(final TelegramBotCommands commands, final HttpClient httpClient, final ObjectMapper objectMapper) {
         this.commands = commands;
-        this.appointmentsRequest = new AppointmentsRequestImpl(httpClient, objectMapper);
-        this.loginPage = new LoginPageImpl(httpClient);
-        this.loginRequest = new SignInRequestImpl(httpClient);
-        this.appointmentPage = new AppointmentPageImpl(httpClient);
+        this.appointmentsRequest = new AppointmentsApiImpl(httpClient, objectMapper);
+        this.loginPage = new LoginHtmlPageImpl(httpClient);
+        this.loginRequest = new SignInApiImpl(httpClient);
+        this.appointmentPage = new AppointmentHtmlPageImpl(httpClient);
     }
 
     public void run(final App.CliArgs args) throws Exception {
-        AppointmentsRequest.Credentials credentials = this.getCredentials(args);
+        AppointmentsApi.Credentials credentials = this.getCredentials(args);
         System.out.println("Got credentials");
         int iterations = 0;
         while (true) {
             System.out.println("Send get appointments request");
             var latestAppointments = this.appointmentsRequest.getLatestAppointments(
-                new AppointmentsRequest.RequestPayload(
+                new AppointmentsApi.RequestPayload(
                     credentials.getAccountNumber(),
                     Headers.appointmentsHeaders(credentials.getYatri(), credentials.getCsrf(), credentials.getAccountNumber())
                 )
@@ -74,7 +74,7 @@ public final class EarlyDateLoop {
         }
     }
 
-    private void updateEarliestAppointment(final List<AppointmentsRequest.ResponsePayload> latestAppointments) throws Exception {
+    private void updateEarliestAppointment(final List<AppointmentsApi.ResponsePayload> latestAppointments) throws Exception {
         if (latestAppointments.isEmpty()) {
             System.out.println("No appointments");
             this.lastDate = null;
@@ -93,10 +93,10 @@ public final class EarlyDateLoop {
         }
     }
 
-    private AppointmentsRequest.Credentials getCredentials(App.CliArgs cliArgs) throws Exception {
-        final LoginPage.ResponsePayload loginPagePayload = this.loginPage.get(Headers.loginPageHeaders());
-        final SignInRequest.Response loginPageResponse = this.loginRequest.send(
-            new SignInRequest.Request(
+    private AppointmentsApi.Credentials getCredentials(App.CliArgs cliArgs) throws Exception {
+        final LoginHtmlPage.ResponsePayload loginPagePayload = this.loginPage.get(Headers.loginPageHeaders());
+        final SignInApi.Response loginPageResponse = this.loginRequest.signIn(
+            new SignInApi.Request(
                 cliArgs.getEmail(),
                 cliArgs.getPassword(),
                 Headers.loginRequestHeaders(
@@ -105,10 +105,10 @@ public final class EarlyDateLoop {
                 loginPagePayload.getCsrfToken()
             )
         );
-        final AppointmentPage.Response appointmentPageResponse = this.appointmentPage.get(
-            new AppointmentPage.Request(loginPageResponse.getLocation(), loginPageResponse.getYatriSession())
+        final AppointmentHtmlPage.Response appointmentPageResponse = this.appointmentPage.get(
+            new AppointmentHtmlPage.Request(loginPageResponse.getLocation(), loginPageResponse.getYatriSession())
         );
-        return new AppointmentsRequest.Credentials(
+        return new AppointmentsApi.Credentials(
             appointmentPageResponse.getCsrf(),
             loginPageResponse.getYatriSession(),
             appointmentPageResponse.getAccountNumber()
